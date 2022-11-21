@@ -4,17 +4,19 @@ using UnityEngine;
 using UnityEngine.Events;
 
 public class OnTrigger : MonoBehaviour
-{
-	public string tag;
-	public UnityEvent OnCall;
+{	
+	public UnityEvent OnTriggered;
+	public string triggerTag;
 
-	bool hasDone = false;
-    void OnTriggerEnter(Collider collider)
+
+	bool fired = false;
+
+	void OnTriggerEnter(Collider collider)
 	{
-		if(!hasDone && collider.gameObject.tag == tag)
+		if(collider.tag == triggerTag && !fired)
 		{
-			hasDone = true;
-			OnCall.Invoke();
+			fired = true;
+			OnTriggered.Invoke();
 		}
 	}
-}
+}	

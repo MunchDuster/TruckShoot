@@ -16,6 +16,8 @@ public class TurretControls: MonoBehaviour
 	float pitch = 0;
 	float yaw = 0;
 
+	public float GetPitch(){return pitch;}
+
 	public void UsePlayerInput()
 	{
 		input = Player.current.input;
@@ -25,9 +27,11 @@ public class TurretControls: MonoBehaviour
 	public Vector3 pitchAxis = Vector3.right;
 
 	//Update is called every frame.
-	private void Update()
+	private void LateUpdate()
 	{
 		if(input == null) return;
+		input.UpdateInput();
+		
 		float yawInput = input.lookX;
 		float pitchInput = input.lookY;
 

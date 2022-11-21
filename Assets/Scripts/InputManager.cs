@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [System.Serializable]
-public class InputManager: MonoBehaviour
+public abstract class InputManager: MonoBehaviour
 {
 	[HideInInspector] public float lookX;
 	[HideInInspector] public float lookY;
@@ -9,4 +9,6 @@ public class InputManager: MonoBehaviour
 	[HideInInspector] public float moveY;
 	[HideInInspector] public bool mousePressed;
 	[HideInInspector] public bool shiftPressed;
+
+	public abstract void UpdateInput();
 }

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BotTurret : MonoBehaviour
+public class BotTurret : InputManager
 {
 	public Transform shootPoint;
 	public Transform[] targets;
@@ -21,10 +21,13 @@ public class BotTurret : MonoBehaviour
 
 	public int loops = 4;
 
+	public float maxDistance = 50;
 	public AnimationCurve curve;
 
+	public bool inRange;
+
     // FixedUpdate is called every physics update
-	private void FixedUpdate()
+	public override void UpdateInput()
 	{
 		if(trackingTarget == null) trackingTarget = targets[t++];
 
@@ -37,47 +40,53 @@ public class BotTurret : MonoBehaviour
 		Vector3 right = Vector3.ProjectOnPlane(targetPoint - shootPoint.position, Vector3.up);
 		Vector3 up = Vector3.up;
 
-
 		float dXZ = right.magnitude;
+
+		inRange = dXZ < maxDistance;
+
+		if(!inRange) return;
+
 		float dY = targetPoint.y - shootPoint.position.y;
 		float a = Physics.gravity.y;
-		float angle = startA;
+		float angle = curve.Evaluate(dXZ / maxDistance) * 45f;
 
-		for(int i = 0; i < curve.keys.Length; i++)
-		{
-			curve.RemoveKey(0);
-		}
 
-		float delta = 0;
 
-		for(int i = 0; i < loops; i++)
-		{
-			float time = GetTime(angle, dY, a);
+		// for(int i = 0; i < curve.keys.Length; i++)
+		// {
+		// 	curve.RemoveKey(0);
+		// }
 
-			if(float.IsNaN(time))
-			{
-				Debug.Log("NaN");
-				angle -= delta / 2f;
-			}
-			else
-			{
-				float rightSpeed = Mathf.Cos(angle * Mathf.Deg2Rad) * bullet.speed;
-				float distX = time * rightSpeed;
-				float realDistX = right.magnitude;
-				delta = (k / (i + 1)) * (realDistX - distX);
-				angle += delta;
-			}
-			curve.AddKey((float)i/loops, angle/45f);
-		}
+		// float delta = 0;
 
-		turret.SetPitch(angle);
+		// for(int i = 0; i < loops; i++)
+		// {
+		// 	float time = GetTime(angle, dY, a);
+
+		// 	if(float.IsNaN(time))
+		// 	{
+		// 		Debug.Log("NaN");
+		// 		angle -= delta / 2f;
+		// 	}
+		// 	else
+		// 	{
+		// 		float rightSpeed = Mathf.Cos(angle * Mathf.Deg2Rad) * bullet.speed;
+		// 		float distX = time * rightSpeed;
+		// 		float realDistX = right.magnitude;
+		// 		delta = (k / (i + 1)) * (realDistX - distX);
+		// 		angle += delta;
+		// 	}
+		// 	curve.AddKey((float)i/loops, angle/45f);
+		// }
+
+		lookY = Mathf.Sign(angle-turret.GetPitch());
 		
 		Vector3 forward = yawForward.forward;
 		Vector3 toTarget = (targetPoint - transform.position).normalized;
 		float angleY = Vector3.SignedAngle(toTarget, forward, Vector3.up);
 		Debug.DrawRay(transform.position, toTarget, Color.red);
 		Debug.DrawRay(transform.position, forward, Color.green);
-		turret.AddYaw(-angleY * 0.9f);
+		lookX = -Mathf.Sign(angleY);
 	}
 	public Transform yawForward;
 

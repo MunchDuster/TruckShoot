@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class PlayerInput: InputManager
 {
-	void Update()
+	public override void UpdateInput()
 	{
 		lookX = Input.GetAxis("Mouse X");
 		lookY = Input.GetAxis("Mouse Y");

@@ -19,12 +19,16 @@ public class Vehicle: MonoBehaviour
 	public WheelCollider[] drivingWheels;
 	public WheelCollider[] steeringWheels;
 
-	private float curSteer;
+	public AudioSource engineSource;
+	public float maxPitch = 4;
+	public float minPitch = 1;
 
+	private float curSteer;
+	public Rigidbody rb;
 	// Start is called before the first frame update
 	void Start()
 	{
-		GetComponent<Rigidbody>().centerOfMass = centerOfMass;
+		rb.centerOfMass = centerOfMass;
 	}
 
 	InputManager oldInput;
@@ -37,8 +41,15 @@ public class Vehicle: MonoBehaviour
 	void FixedUpdate()
 	{
 		if(input == null) return;
+		input.UpdateInput();
 		UpdateSteeringWheels();
 		UpdateDrivingWheels();
+		UpdateEngineSound();
+	}
+	void UpdateEngineSound()
+	{
+		float speed = drivingWheels[0].rpm / maxRPM;
+		engineSource.pitch = Mathf.Lerp(minPitch, maxPitch, speed);
 	}
 	void UpdateDrivingWheels()
 	{
@@ -55,7 +66,7 @@ public class Vehicle: MonoBehaviour
 			foreach (WheelCollider wheelCollider in drivingWheels)
 			{
 				wheelCollider.brakeTorque = 0;
-				wheelCollider.motorTorque = maxTorque * input.moveY * rpmToTorque.Evaluate(Mathf.Clamp01(wheelCollider.rpm/ maxRPM));
+				wheelCollider.motorTorque = maxTorque * input.moveY * rpmToTorque.Evaluate(Mathf.Clamp01(wheelCollider.rpm / maxRPM));
 			}
 		}
 	}

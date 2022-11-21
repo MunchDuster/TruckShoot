@@ -7,9 +7,11 @@ public class PredictPath: MonoBehaviour
 	public Turret turret;
 	public Bullet bullet;
 	public LayerMask layermask;
+	public Rigidbody rb;
 	public int maxPoints = 200;
+	public float dt = 0.08f;
 	
-	void FixedUpdate()
+	void LateUpdate()
 	{
 		List<Vector3> points = new List<Vector3>();
 
@@ -21,7 +23,7 @@ public class PredictPath: MonoBehaviour
 			velocity += Physics.gravity * Time.fixedDeltaTime;
 			pos += velocity * Time.fixedDeltaTime;
 
-			if(Physics.Raycast(pos, velocity.normalized, out RaycastHit hit, velocity.magnitude * Time.fixedDeltaTime, layermask))
+			if(Physics.Raycast(pos, velocity.normalized, out RaycastHit hit, velocity.magnitude * dt, layermask))
 			{
 				points.Add(hit.point);
 				break;

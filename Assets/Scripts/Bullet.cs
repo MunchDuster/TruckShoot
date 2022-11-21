@@ -5,6 +5,7 @@ using UnityEngine;
 public class Bullet : MonoBehaviour
 {
 	[Header("Refs")]
+	public Vector3 parentVelocity;
 	public Rigidbody rb;
 	public GameObject hitEffect;
 	public AudioSource hitAudio;

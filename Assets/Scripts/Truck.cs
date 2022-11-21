@@ -26,12 +26,6 @@ public class Truck : MonoBehaviour
 		OnEnterTruck.Invoke();
 	}
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
 	public InputManager input;
 	public void UsePlayerInput()
 	{
@@ -41,12 +35,17 @@ public class Truck : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-		if(input != null && input.shiftPressed && !on)
+		if(input != null)
 		{
-			OnTruckStart.Invoke();
-			on = true;
-		} 
+			input.UpdateInput();
+			if(input.shiftPressed && !on)
+			{
+				OnTruckStart.Invoke();
+				on = true;
+			} 
 
+		}
+		
         UpdateWheelMeshes();
     }
 	

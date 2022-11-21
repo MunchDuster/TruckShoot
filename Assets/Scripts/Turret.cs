@@ -8,6 +8,7 @@ public class Turret : MonoBehaviour
 	public InputManager input;
 	public Transform shootPoint;
 	public GameObject bulletPrefab;
+	public Rigidbody rb;
 	public UnityEvent onFire;
 	public Animator animator;
 	public float recoilTime = 3;
@@ -22,14 +23,19 @@ public class Turret : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(input != null && input.shiftPressed && !isRecoiling) Fire();
+		if(input != null)
+		{
+			input.UpdateInput();
+        	if(input.shiftPressed && !isRecoiling) Fire();
+		}
     }
 
 	void Fire()
 	{
 		onFire.Invoke();
-		animator.SetTrigger("Fire");
-		Instantiate(bulletPrefab, shootPoint.position, shootPoint.rotation);
+		if(animator != null) animator.SetTrigger("Fire");
+		GameObject newBullet = Instantiate(bulletPrefab, shootPoint.position, shootPoint.rotation);
+		newBullet.GetComponent<Bullet>().parentVelocity = rb.GetPointVelocity(shootPoint.position);
 		StartCoroutine(Recoil());
 	}
 
